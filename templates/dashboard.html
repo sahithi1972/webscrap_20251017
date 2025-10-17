@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Data Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1><i class="fas fa-chart-line"></i> Interactive Data Dashboard</h1>
+                <div class="user-info">
+                    <span>Welcome, {{ username }}!</span>
+                    <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+                </div>
+            </div>
+            <p class="tagline">Click on any card to get real-time information</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- Weather Card -->
+            <div class="card weather" data-type="weather">
+                <div class="card-header">
+                    <i class="fas fa-cloud-sun"></i>
+                    <h2>Weather Information</h2>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Location</span>
+                    <span class="data-value" id="location">{{ default_city }}</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Temperature</span>
+                    <span class="data-value" id="temperature">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Conditions</span>
+                    <span class="data-value" id="conditions">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Humidity</span>
+                    <span class="data-value" id="humidity">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Wind</span>
+                    <span class="data-value" id="wind">--</span>
+                </div>
+                <div class="last-updated" id="weather-updated">Not updated yet</div>
+            </div>
+
+            <!-- Stocks Card -->
+            <div class="card stocks" data-type="stocks">
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Stock Prices</h2>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Symbol</span>
+                    <span class="data-value" id="stock-symbol">{{ default_stock }}</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Price</span>
+                    <span class="data-value" id="stock-price">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Change</span>
+                    <span class="data-value" id="stock-change">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Market Cap</span>
+                    <span class="data-value" id="stock-cap">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Volume</span>
+                    <span class="data-value" id="stock-volume">--</span>
+                </div>
+                <div class="last-updated" id="stocks-updated">Not updated yet</div>
+            </div>
+
+            <!-- News Card -->
+            <div class="card news" data-type="news">
+                <div class="card-header">
+                    <i class="fas fa-newspaper"></i>
+                    <h2>Latest News</h2>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Category</span>
+                    <span class="data-value" id="news-category">{{ default_news_category.title() }}</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Headline</span>
+                    <span class="data-value" id="news-headline">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Source</span>
+                    <span class="data-value" id="news-source">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Published</span>
+                    <span class="data-value" id="news-published">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Summary</span>
+                    <span class="data-value" id="news-summary">--</span>
+                </div>
+                <div class="last-updated" id="news-updated">Not updated yet</div>
+            </div>
+        </div>
+
+        <!-- Input Panels -->
+        <div class="input-panel" id="weather-panel">
+            <div class="panel-header">
+                <i class="fas fa-cloud-sun"></i>
+                <h2>Get Weather Information</h2>
+            </div>
+            <div class="input-group">
+                <input type="text" class="input-field" id="weather-location" placeholder="Enter city name" value="{{ default_city }}">
+                <button class="btn btn-primary" id="get-weather">
+                    <i class="fas fa-cloud-sun-rain"></i> Get Weather
+                </button>
+            </div>
+            <div class="status">
+                <i class="fas fa-circle"></i> <span id="weather-status">Enter a location and click Get Weather</span>
+            </div>
+        </div>
+
+        <div class="input-panel" id="stocks-panel">
+            <div class="panel-header">
+                <i class="fas fa-chart-line"></i>
+                <h2>Get Stock Information</h2>
+            </div>
+            <div class="input-group">
+                <input type="text" class="input-field" id="stock-symbol-input" placeholder="Enter stock symbol" value="{{ default_stock }}">
+                <button class="btn btn-primary" id="get-stocks">
+                    <i class="fas fa-chart-line"></i> Get Stock Data
+                </button>
+            </div>
+            <div class="status">
+                <i class="fas fa-circle"></i> <span id="stocks-status">Enter a stock symbol and click Get Stock Data</span>
+            </div>
+        </div>
+
+        <div class="input-panel" id="news-panel">
+            <div class="panel-header">
+                <i class="fas fa-newspaper"></i>
+                <h2>Get News Information</h2>
+            </div>
+            <div class="input-group">
+                <select class="input-field" id="news-category-input">
+                    <option value="technology" {% if default_news_category == 'technology' %}selected{% endif %}>Technology</option>
+                    <option value="business" {% if default_news_category == 'business' %}selected{% endif %}>Business</option>
+                    <option value="sports" {% if default_news_category == 'sports' %}selected{% endif %}>Sports</option>
+                    <option value="entertainment" {% if default_news_category == 'entertainment' %}selected{% endif %}>Entertainment</option>
+                </select>
+                <button class="btn btn-primary" id="get-news">
+                    <i class="fas fa-newspaper"></i> Get News
+                </button>
+            </div>
+            <div class="status">
+                <i class="fas fa-circle"></i> <span id="news-status">Select a category and click Get News</span>
+            </div>
+        </div>
+
+        <footer>
+            <p>Interactive Data Dashboard &copy; 2023 | Real-time updates every 60 seconds</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            const panels = document.querySelectorAll('.input-panel');
+            let activeCard = null;
+            let updateIntervals = {};
+            
+            // Initialize with default data
+            updateWeatherData('{{ default_city }}');
+            updateStockData('{{ default_stock }}');
+            updateNewsData('{{ default_news_category }}');
+            
+            // Card click event listeners
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const cardType = this.dataset.type;
+                    
+                    // Remove active class from all cards and panels
+                    cards.forEach(c => c.classList.remove('active'));
+                    panels.forEach(p => p.classList.remove('active'));
+                    
+                    // Add active class to clicked card
+                    this.classList.add('active');
+                    
+                    // Show corresponding input panel
+                    document.getElementById(`${cardType}-panel`).classList.add('active');
+                    
+                    activeCard = cardType;
+                });
+            });
+            
+            // Weather button event listener
+            document.getElementById('get-weather').addEventListener('click', function() {
+                const location = document.getElementById('weather-location').value.trim();
+                if (!location) {
+                    alert('Please enter a location');
+                    return;
+                }
+                
+                document.getElementById('location').textContent = location;
+                updateWeatherData(location);
+            });
+            
+            // Stocks button event listener
+            document.getElementById('get-stocks').addEventListener('click', function() {
+                const symbol = document.getElementById('stock-symbol-input').value.trim().toUpperCase();
+                if (!symbol) {
+                    alert('Please enter a stock symbol');
+                    return;
+                }
+                
+                document.getElementById('stock-symbol').textContent = symbol;
+                updateStockData(symbol);
+            });
+            
+            // News button event listener
+            document.getElementById('get-news').addEventListener('click', function() {
+                const category = document.getElementById('news-category-input').value;
+                document.getElementById('news-category').textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                updateNewsData(category);
+            });
+            
+            // Function to update weather data
+            function updateWeatherData(location) {
+                // Show loading state
+                document.getElementById('weather-status').innerHTML = '<span class="loading"></span> Fetching weather data...';
+                
+                fetch('/api/weather', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({city: location})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Update the UI with weather data
+                    document.getElementById('temperature').textContent = data.temperature;
+                    document.getElementById('conditions').textContent = data.conditions;
+                    document.getElementById('humidity').textContent = data.humidity;
+                    document.getElementById('wind').textContent = data.wind;
+                    document.getElementById('weather-updated').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+                    
+                    // Update status
+                    document.getElementById('weather-status').innerHTML = '<i class="fas fa-circle"></i> Last updated: ' + new Date().toLocaleTimeString();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('weather-status').innerHTML = '<i class="fas fa-exclamation-circle"></i> Error fetching data';
+                });
+            }
+            
+            // Function to update stock data
+            function updateStockData(symbol) {
+                // Show loading state
+                document.getElementById('stocks-status').innerHTML = '<span class="loading"></span> Fetching stock data...';
+                
+                fetch('/api/stocks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({symbol: symbol})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Update the UI with stock data
+                    document.getElementById('stock-price').textContent = data.price;
+                    document.getElementById('stock-change').textContent = data.change;
+                    document.getElementById('stock-change').className = `data-value ${data.change_class}`;
+                    document.getElementById('stock-cap').textContent = data.market_cap;
+                    document.getElementById('stock-volume').textContent = data.volume;
+                    document.getElementById('stocks-updated').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+                    
+                    // Update status
+                    document.getElementById('stocks-status').innerHTML = '<i class="fas fa-circle"></i> Last updated: ' + new Date().toLocaleTimeString();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('stocks-status').innerHTML = '<i class="fas fa-exclamation-circle"></i> Error fetching data';
+                });
+            }
+            
+            // Function to update news data
+            function updateNewsData(category) {
+                // Show loading state
+                document.getElementById('news-status').innerHTML = '<span class="loading"></span> Fetching news data...';
+                
+                fetch('/api/news', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({category: category})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Update the UI with news data
+                    document.getElementById('news-headline').textContent = data.headline;
+                    document.getElementById('news-source').textContent = data.source;
+                    document.getElementById('news-published').textContent = data.published;
+                    document.getElementById('news-summary').textContent = data.summary;
+                    document.getElementById('news-updated').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+                    
+                    // Update status
+                    document.getElementById('news-status').innerHTML = '<i class="fas fa-circle"></i> Last updated: ' + new Date().toLocaleTimeString();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('news-status').innerHTML = '<i class="fas fa-exclamation-circle"></i> Error fetching data';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
