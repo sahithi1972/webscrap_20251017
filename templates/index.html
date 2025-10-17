@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Crypto Prices</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Top 5 Cryptocurrencies</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Last Updated</th>
+        </tr>
+        {% for name, price, last_updated in data %}
+        <tr>
+            <td>{{ name }}</td>
+            <td>{{ price }}</td>
+            <td>{{ last_updated }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
