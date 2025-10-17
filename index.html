@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Stock Dashboard</title>
+    <title>Interactive Data Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -22,7 +22,9 @@
             --success: #00b894;
             --warning: #fdcb6e;
             --danger: #e17055;
+            --weather: #74b9ff;
             --stocks: #55efc4;
+            --news: #ffeaa7;
         }
 
         body {
@@ -79,8 +81,16 @@
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
         }
 
+        .card.weather.active {
+            background: rgba(116, 185, 255, 0.2);
+        }
+
         .card.stocks.active {
             background: rgba(85, 239, 196, 0.2);
+        }
+
+        .card.news.active {
+            background: rgba(255, 234, 167, 0.2);
         }
 
         .card-header {
@@ -96,8 +106,16 @@
             margin-right: 15px;
         }
 
+        .weather .card-header i {
+            color: var(--weather);
+        }
+
         .stocks .card-header i {
             color: var(--stocks);
+        }
+
+        .news .card-header i {
+            color: var(--news);
         }
 
         .card-header h2 {
@@ -123,10 +141,18 @@
             font-weight: 600;
         }
 
+        .weather .data-value {
+            color: var(--weather);
+        }
+
         .stocks .data-value {
             color: var(--stocks);
         }
 
+        .news .data-value {
+            color: var(--news);
+        }
+        
         .input-panel {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -268,11 +294,11 @@
             margin-top: 10px;
             text-align: right;
         }
-
+        
         .positive {
             color: var(--success);
         }
-
+        
         .negative {
             color: var(--danger);
         }
@@ -281,10 +307,38 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-chart-line"></i> Interactive Stock Dashboard</h1>
-            <p class="tagline">Click on any stock card to get real-time information</p>
+            <h1><i class="fas fa-chart-line"></i> Interactive Data Dashboard</h1>
+            <p class="tagline">Click on any card to get real-time information</p>
         </header>
         <div class="dashboard">
+            <div class="card weather" data-type="weather">
+                <div class="card-header">
+                    <i class="fas fa-cloud-sun"></i>
+                    <h2>Weather Information</h2>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Location</span>
+                    <span class="data-value" id="location">New York</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Temperature</span>
+                    <span class="data-value" id="temperature">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Conditions</span>
+                    <span class="data-value" id="conditions">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Humidity</span>
+                    <span class="data-value" id="humidity">--</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Wind</span>
+                    <span class="data-value" id="wind">--</span>
+                </div>
+                <div class="last-updated" id="weather-updated">Not updated yet</div>
+            </div>
+
             <div class="card stocks" data-type="stocks">
                 <div class="card-header">
                     <i class="fas fa-chart-line"></i>
@@ -313,60 +367,49 @@
                 <div class="last-updated" id="stocks-updated">Not updated yet</div>
             </div>
 
-            <div class="card stocks" data-type="stocks">
+            <div class="card news" data-type="news">
                 <div class="card-header">
-                    <i class="fas fa-chart-line"></i>
-                    <h2>Stock Prices</h2>
+                    <i class="fas fa-newspaper"></i>
+                    <h2>Latest News</h2>
                 </div>
                 <div class="data-item">
-                    <span class="data-label">Symbol</span>
-                    <span class="data-value" id="stock-symbol-2">MSFT</span>
+                    <span class="data-label">Category</span>
+                    <span class="data-value" id="news-category">Technology</span>
                 </div>
                 <div class="data-item">
-                    <span class="data-label">Price</span>
-                    <span class="data-value" id="stock-price-2">--</span>
+                    <span class="data-label">Headline</span>
+                    <span class="data-value" id="news-headline">--</span>
                 </div>
                 <div class="data-item">
-                    <span class="data-label">Change</span>
-                    <span class="data-value" id="stock-change-2">--</span>
+                    <span class="data-label">Source</span>
+                    <span class="data-value" id="news-source">--</span>
                 </div>
                 <div class="data-item">
-                    <span class="data-label">Market Cap</span>
-                    <span class="data-value" id="stock-cap-2">--</span>
+                    <span class="data-label">Published</span>
+                    <span class="data-value" id="news-published">--</span>
                 </div>
                 <div class="data-item">
-                    <span class="data-label">Volume</span>
-                    <span class="data-value" id="stock-volume-2">--</span>
+                    <span class="data-label">Summary</span>
+                    <span class="data-value" id="news-summary">--</span>
                 </div>
-                <div class="last-updated" id="stocks-updated-2">Not updated yet</div>
+                <div class="last-updated" id="news-updated">Not updated yet</div>
             </div>
-
-            <div class="card stocks" data-type="stocks">
-                <div class="card-header">
-                    <i class="fas fa-chart-line"></i>
-                    <h2>Stock Prices</h2>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Symbol</span>
-                    <span class="data-value" id="stock-symbol-3">GOOGL</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Price</span>
-                    <span class="data-value" id="stock-price-3">--</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Change</span>
-                    <span class="data-value" id="stock-change-3">--</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Market Cap</span>
-                    <span class="data-value" id="stock-cap-3">--</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Volume</span>
-                    <span class="data-value" id="stock-volume-3">--</span>
-                </div>
-                <div class="last-updated" id="stocks-updated-3">Not updated yet</div>
+        </div>
+        
+        <!-- Weather Input Panel -->
+        <div class="input-panel" id="weather-panel">
+            <div class="panel-header">
+                <i class="fas fa-cloud-sun"></i>
+                <h2>Get Weather Information</h2>
+            </div>
+            <div class="input-group">
+                <input type="text" class="input-field" id="weather-location" placeholder="Enter city name (e.g., New York)" value="New York">
+                <button class="btn btn-primary" id="get-weather">
+                    <i class="fas fa-cloud-sun-rain"></i> Get Weather
+                </button>
+            </div>
+            <div class="status">
+                <i class="fas fa-circle"></i> <span id="weather-status">Enter a location and click Get Weather</span>
             </div>
         </div>
 
@@ -387,8 +430,32 @@
             </div>
         </div>
 
+        <!-- News Input Panel -->
+        <div class="input-panel" id="news-panel">
+            <div class="panel-header">
+                <i class="fas fa-newspaper"></i>
+                <h2>Get News Information</h2>
+            </div>
+            <div class="input-group">
+                <select class="input-field" id="news-category-input">
+                    <option value="technology">Technology</option>
+                    <option value="business">Business</option>
+                    <option value="sports">Sports</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="health">Health</option>
+                    <option value="science">Science</option>
+                </select>
+                <button class="btn btn-primary" id="get-news">
+                    <i class="fas fa-newspaper"></i> Get News
+                </button>
+            </div>
+            <div class="status">
+                <i class="fas fa-circle"></i> <span id="news-status">Select a category and click Get News</span>
+            </div>
+        </div>
+
         <footer>
-            <p>Interactive Stock Dashboard &copy; 2023 | Real-time updates every 60 seconds</p>
+            <p>Interactive Data Dashboard &copy; 2023 | Real-time updates every 60 seconds</p>
         </footer>
     </div>
     <script>
@@ -399,9 +466,9 @@
             let updateIntervals = {};
             
             // Initialize with default data
-            updateStockData('AAPL', 1);
-            updateStockData('MSFT', 2);
-            updateStockData('GOOGL', 3);
+            updateWeatherData('New York');
+            updateStockData('AAPL');
+            updateNewsData('technology');
             
             // Card click event listeners
             cards.forEach(card => {
@@ -422,6 +489,18 @@
                 });
             });
             
+            // Weather button event listener
+            document.getElementById('get-weather').addEventListener('click', function() {
+                const location = document.getElementById('weather-location').value.trim();
+                if (!location) {
+                    alert('Please enter a location');
+                    return;
+                }
+                
+                document.getElementById('location').textContent = location;
+                updateWeatherData(location);
+            });
+            
             // Stocks button event listener
             document.getElementById('get-stocks').addEventListener('click', function() {
                 const symbol = document.getElementById('stock-symbol-input').value.trim().toUpperCase();
@@ -430,59 +509,69 @@
                     return;
                 }
                 
-                // Update the first card with the new symbol
                 document.getElementById('stock-symbol').textContent = symbol;
-                updateStockData(symbol, 1);
+                updateStockData(symbol);
             });
             
+            // News button event listener
+            document.getElementById('get-news').addEventListener('click', function() {
+                const category = document.getElementById('news-category-input').value;
+                document.getElementById('news-category').textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                updateNewsData(category);
+            });
+            
+            // Function to update weather data
+            function updateWeatherData(location) {
+                // Show loading state
+                document.getElementById('weather-status').innerHTML = '<span class="loading"></span> Fetching weather data...';
+                
+                // In a real application, this would call your backend API
+                // For this demo, we'll simulate the API call
+                setTimeout(() => {
+                    // Mock weather data
+                    const weatherData = {
+                        location: location,
+                        temperature: `${Math.floor(Math.random() * 30) + 60}°F`,
+                        conditions: ['Sunny', 'Partly Cloudy', 'Cloudy', 'Rainy', 'Stormy'][Math.floor(Math.random() * 5)],
+                        humidity: `${Math.floor(Math.random() * 40) + 40}%`,
+                        wind: `${Math.floor(Math.random() * 15) + 5} mph`
+                    };
+                    
+                    // Update the UI with weather data
+                    document.getElementById('temperature').textContent = weatherData.temperature;
+                    document.getElementById('conditions').textContent = weatherData.conditions;
+                    document.getElementById('humidity').textContent = weatherData.humidity;
+                    document.getElementById('wind').textContent = weatherData.wind;
+                    document.getElementById('weather-updated').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+                    
+                    // Update status
+                    document.getElementById('weather-status').innerHTML = '<i class="fas fa-circle"></i> Last updated: ' + new Date().toLocaleTimeString();
+                    
+                    // Set up auto-refresh for this data type
+                    if (updateIntervals.weather) {
+                        clearInterval(updateIntervals.weather);
+                    }
+                    
+                    updateIntervals.weather = setInterval(() => {
+                        updateWeatherData(location);
+                    }, 60000);
+                    
+                }, 1500);
+            }
+            
             // Function to update stock data
-            async function updateStockData(symbol, cardNumber = 1) {
+            function updateStockData(symbol) {
                 // Show loading state
                 document.getElementById('stocks-status').innerHTML = '<span class="loading"></span> Fetching stock data...';
                 
-                try {
-                    // Using Alpha Vantage API for real-time stock data
-                    const apiKey = 'demo'; // In production, use your own API key
-                    const response = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`);
-                    const data = await response.json();
-                    
-                    if (data['Global Quote']) {
-                        const quote = data['Global Quote'];
-                        
-                        // Update the UI with stock data
-                        document.getElementById(`stock-symbol-${cardNumber}`).textContent = symbol;
-                        document.getElementById(`stock-price-${cardNumber}`).textContent = `$${parseFloat(quote['05. price']).toFixed(2)}`;
-                        
-                        const change = parseFloat(quote['09. change']).toFixed(2);
-                        const changePercent = quote['10. change percent'];
-                        
-                        document.getElementById(`stock-change-${cardNumber}`).textContent = `${change} (${changePercent})`;
-                        
-                        // Set color based on positive/negative change
-                        if (parseFloat(change) >= 0) {
-                            document.getElementById(`stock-change-${cardNumber}`).className = 'data-value positive';
-                        } else {
-                            document.getElementById(`stock-change-${cardNumber}`).className = 'data-value negative';
-                        }
-                        
-                        // For market cap and volume, we'll use mock data as Alpha Vantage doesn't provide these in the quote endpoint
-                        document.getElementById(`stock-cap-${cardNumber}`).textContent = `${(Math.random() * 500 + 100).toFixed(0)}B`;
-                        document.getElementById(`stock-volume-${cardNumber}`).textContent = `${(parseInt(quote['06. volume']) / 1000000).toFixed(2)}M`;
-                        document.getElementById(`stocks-updated-${cardNumber}`).textContent = `Updated: ${new Date().toLocaleTimeString()}`;
-                        
-                        // Update status
-                        document.getElementById('stocks-status').innerHTML = '<i class="fas fa-circle"></i> Last updated: ' + new Date().toLocaleTimeString();
-                    } else {
-                        throw new Error('Invalid stock symbol or API limit reached');
-                    }
-                } catch (error) {
-                    console.error('Error fetching stock data:', error);
-                    
-                    // Fallback to mock data if API fails
+                // In a real application, this would call your backend API
+                // For this demo, we'll simulate the API call
+                setTimeout(() => {
+                    // Mock stock data
                     const basePrices = {
                         'AAPL': 182.63,
-                        'MSFT': 330.80,
                         'GOOGL': 138.21,
+                        'MSFT': 330.80,
                         'TSLA': 248.50,
                         'AMZN': 145.18
                     };
@@ -490,35 +579,123 @@
                     const basePrice = basePrices[symbol] || 100 + Math.random() * 200;
                     const fluctuation = (Math.random() * 4 - 2).toFixed(2);
                     const newPrice = (parseFloat(basePrice) + parseFloat(fluctuation)).toFixed(2);
-                    const changePercent = `${(parseFloat(fluctuation) / parseFloat(basePrice) * 100).toFixed(2)}%`;
+                    const change = parseFloat(fluctuation) > 0 ? `+${fluctuation}` : fluctuation;
+                    const changeColor = parseFloat(fluctuation) >= 0 ? 'positive' : 'negative';
                     
-                    document.getElementById(`stock-symbol-${cardNumber}`).textContent = symbol;
-                    document.getElementById(`stock-price-${cardNumber}`).textContent = `$${newPrice}`;
+                    const stockData = {
+                        symbol: symbol,
+                        price: `$${newPrice}`,
+                        change: change,
+                        changeColor: changeColor,
+                        marketCap: `${(Math.random() * 500 + 100).toFixed(0)}B`,
+                        volume: `${(Math.random() * 50 + 5).toFixed(0)}M`
+                    };
                     
-                    const changeText = `${fluctuation} (${changePercent})`;
-                    document.getElementById(`stock-change-${cardNumber}`).textContent = changeText;
+                    // Update the UI with stock data
+                    document.getElementById('stock-price').textContent = stockData.price;
+                    document.getElementById('stock-change').textContent = stockData.change;
+                    document.getElementById('stock-change').className = `data-value ${stockData.changeColor}`;
+                    document.getElementById('stock-cap').textContent = stockData.marketCap;
+                    document.getElementById('stock-volume').textContent = stockData.volume;
+                    document.getElementById('stocks-updated').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
                     
-                    if (parseFloat(fluctuation) >= 0) {
-                        document.getElementById(`stock-change-${cardNumber}`).className = 'data-value positive';
-                    } else {
-                        document.getElementById(`stock-change-${cardNumber}`).className = 'data-value negative';
+                    // Update status
+                    document.getElementById('stocks-status').innerHTML = '<i class="fas fa-circle"></i> Last updated: ' + new Date().toLocaleTimeString();
+                    
+                    // Set up auto-refresh for this data type
+                    if (updateIntervals.stocks) {
+                        clearInterval(updateIntervals.stocks);
                     }
                     
-                    document.getElementById(`stock-cap-${cardNumber}`).textContent = `${(Math.random() * 500 + 100).toFixed(0)}B`;
-                    document.getElementById(`stock-volume-${cardNumber}`).textContent = `${(Math.random() * 50 + 5).toFixed(2)}M`;
-                    document.getElementById(`stocks-updated-${cardNumber}`).textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+                    updateIntervals.stocks = setInterval(() => {
+                        updateStockData(symbol);
+                    }, 60000);
                     
-                    document.getElementById('stocks-status').innerHTML = '<i class="fas fa-circle"></i> Using mock data (API limit may be reached)';
-                }
+                }, 1500);
+            }
+            
+            // Function to update news data
+            function updateNewsData(category) {
+                // Show loading state
+                document.getElementById('news-status').innerHTML = '<span class="loading"></span> Fetching news data...';
                 
-                // Set up auto-refresh for this data type
-                if (updateIntervals[`stocks-${cardNumber}`]) {
-                    clearInterval(updateIntervals[`stocks-${cardNumber}`]);
-                }
-                
-                updateIntervals[`stocks-${cardNumber}`] = setInterval(() => {
-                    updateStockData(symbol, cardNumber);
-                }, 60000);
+                // In a real application, this would call your backend API
+                // For this demo, we'll simulate the API call
+                setTimeout(() => {
+                    // Mock news data based on category
+                    const newsTemplates = {
+                        technology: [
+                            "AI Breakthrough Revolutionizes Industry",
+                            "New Smartphone Launch Breaks Sales Records",
+                            "Cybersecurity Firm Discovers Major Vulnerability",
+                            "Tech Giant Announces Quantum Computing Milestone"
+                        ],
+                        business: [
+                            "Market Reaches New All-Time High",
+                            "Startup Secures Record Funding Round",
+                            "Economic Forecast Shows Strong Growth",
+                            "Major Merger Announced in Tech Sector"
+                        ],
+                        sports: [
+                            "Underdog Team Wins Championship",
+                            "Star Athlete Signs Record Contract",
+                            "International Tournament Kicks Off",
+                            "New Sports League Announces Expansion"
+                        ],
+                        entertainment: [
+                            "Blockbuster Film Breaks Box Office Records",
+                            "Award Show Delivers Surprising Winners",
+                            "Streaming Service Announces Original Content",
+                            "Celebrity Couple Makes Red Carpet Debut"
+                        ],
+                        health: [
+                            "Medical Researchers Announce Breakthrough",
+                            "New Fitness Trend Sweeps the Nation",
+                            "Study Reveals Benefits of Mediterranean Diet",
+                            "Mental Health App Reaches Milestone Users"
+                        ],
+                        science: [
+                            "Space Mission Discovers New Exoplanet",
+                            "Researchers Make Fusion Energy Breakthrough",
+                            "Climate Study Reveals Alarming Trends",
+                            "Archaeologists Uncover Ancient Civilization"
+                        ]
+                    };
+                    
+                    const sources = ["Global News", "Reuters", "Associated Press", "Bloomberg", "CNN"];
+                    
+                    const headlines = newsTemplates[category] || newsTemplates.technology;
+                    const randomHeadline = headlines[Math.floor(Math.random() * headlines.length)];
+                    const randomSource = sources[Math.floor(Math.random() * sources.length)];
+                    
+                    const newsData = {
+                        category: category.charAt(0).toUpperCase() + category.slice(1),
+                        headline: randomHeadline,
+                        source: randomSource,
+                        published: new Date().toLocaleDateString(),
+                        summary: `This is a summary of the latest news in ${category}. The full story contains more details and expert analysis.`
+                    };
+                    
+                    // Update the UI with news data
+                    document.getElementById('news-headline').textContent = newsData.headline;
+                    document.getElementById('news-source').textContent = newsData.source;
+                    document.getElementById('news-published').textContent = newsData.published;
+                    document.getElementById('news-summary').textContent = newsData.summary;
+                    document.getElementById('news-updated').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+                    
+                    // Update status
+                    document.getElementById('news-status').innerHTML = '<i class="fas fa-circle"></i> Last updated: ' + new Date().toLocaleTimeString();
+                    
+                    // Set up auto-refresh for this data type
+                    if (updateIntervals.news) {
+                        clearInterval(updateIntervals.news);
+                    }
+                    
+                    updateIntervals.news = setInterval(() => {
+                        updateNewsData(category);
+                    }, 60000);
+                    
+                }, 1500);
             }
         });
     </script>
